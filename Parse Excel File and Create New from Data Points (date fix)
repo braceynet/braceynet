@@ -1,0 +1,30 @@
+Sub SortData()
+    Dim ws As Worksheet
+    Dim rng As Range
+    Dim dateValue As String
+    Dim host As String
+    Dim arr As Variant
+    Dim i As Long
+
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Change "Sheet1" to the name of your worksheet
+    Set rng = ws.Range("A1", ws.Range("A1").End(xlDown)) ' Assumes data in Column A starts from Row 1 and goes down to the last row with data
+
+    For i = 1 To rng.Rows.Count
+        arr = Split(rng.Cells(i, 1).Value, "-")
+        dateValue = arr(0)
+        host = arr(1)
+        ' Check if the date directory exists
+        If Not Dir("output\" & dateValue, vbDirectory) = "" Then
+        Else
+            MkDir "output\" & dateValue
+        End If
+        ' Check if the host file exists
+        If Not Dir("output\" & dateValue & "\" & host & ".xlsx") = "" Then
+        Else
+            ' Create a new workbook for the host
+            Workbooks.Add
+            ActiveWorkbook.SaveAs Filename:="output\" & dateValue & "\" & host & ".xlsx", FileFormat:=xlOpenXMLWorkbook
+            ActiveWorkbook.Close
+        End If
+    Next i
+End Sub
